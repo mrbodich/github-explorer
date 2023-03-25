@@ -11,7 +11,7 @@ import SwiftUI
 struct Github_ExplorerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootScreen()
         }
     }
 }
