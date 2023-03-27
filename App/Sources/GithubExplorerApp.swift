@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct GithubExplorerApp: SwiftUI.App {
     @StateObject var appCoordinator = AppCoordinator(initialTab: .explore,
-                                                     githubClient: MockGithubReposClient())
+                                                     githubClient: RemoteGithubReposClient())
     
     var body: some Scene {
         WindowGroup {

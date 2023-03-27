@@ -74,22 +74,26 @@ struct GithubRepoCellView_Previews: PreviewProvider {
                   name: "ver-useful-repo",
                   owner: .init(login: "John Smith", avatarUrl: "https://avatars.githubusercontent.com/u/9919?s=200&v=4"),
                   description: "让生产力加倍的 ChatGPT 快捷指令，按照领域和功能分区，可对提示词进行标签筛选、关键词搜索和一键复制。",
-                  stargazersCount: 4195),
+                  stargazersCount: 4195,
+                  createdAt: ""),
             .init(id: 1,
                   name: "ver-useful-repo",
                   owner: .init(login: "John Smith", avatarUrl: ""),
                   description: "让生产力加倍的 ChatGPT 快捷指令，按照领域和功能分区，可对提示词进行标签筛选、关键词搜索和一键复制。",
-                  stargazersCount: 4195),
+                  stargazersCount: 4195,
+                  createdAt: ""),
             .init(id: 2,
                   name: "HelpfulFramework",
                   owner: .init(login: "c00lhacker", avatarUrl: "https://avatars.githubusercontent.com/u/20487725?s=200&v=4"),
                   description: "Opensource IT Communities",
-                  stargazersCount: 38500),
+                  stargazersCount: 38500,
+                  createdAt: ""),
             .init(id: 3,
                   name: "Pet_project",
                   owner: .init(login: "noob_user", avatarUrl: ""),
                   description: nil,
-                  stargazersCount: 1)
+                  stargazersCount: 1,
+                  createdAt: "")
         ]
         
         let favouritedIDs: Set<UInt> = [1, 3]

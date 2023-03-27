@@ -13,6 +13,7 @@ struct GithubRepoModel: Decodable, Identifiable {
     let owner: GithubRepoOwner
     let description: String?
     let stargazersCount: UInt
+    let createdAt: String
 }
 
 struct GithubRepoOwner: Decodable {

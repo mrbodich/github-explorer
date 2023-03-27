@@ -8,7 +8,7 @@
 import Foundation
 
 struct GithubReposPage: Decodable {
-    let totalCount: UInt16
+    let totalCount: UInt
     let incompleteResults: Bool
     let items: [GithubRepoModel]
 }
