@@ -9,18 +9,34 @@ import SwiftUI
 
 struct GithubReposCoordinatorView: View {
     @ObservedObject var coordinator: GithubReposCoordinator
+    @State var isLoadingMore: Bool = false
     
     var body: some View {
         VStack(spacing: 20) {
             RoundedTabs(selectedTab: $coordinator.selectedTab,
                         tabs: [.day, .week, .month])
             .padding(.horizontal, 20)
-            GithubReposView(repos: coordinator.repos,
-                            favouritedIDs: [])
-            .refreshable {
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
-            }
+            .disabled(isLoadingMore)
+            
+            GithubReposViewContainer(viewModel: coordinator.reposVM)
+                .refreshable {
+                    coordinator.isRefreshing = true
+                    try? await coordinator.reposVM.refresh()
+                    coordinator.isRefreshing = false
+                }
+                .infiniteScrollable {
+                    isLoadingMore = true
+                    try? await coordinator.reposVM.loadMore()
+                    isLoadingMore = false
+                }
+                .overlay {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .opacity(coordinator.isRefreshing ? 1 : 0)
+                        .animation(.easeInOut, value: coordinator.isRefreshing)
+                }
         }
+        .disabled(coordinator.isRefreshing)
     }
 }
 

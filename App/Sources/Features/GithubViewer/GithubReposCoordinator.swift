@@ -9,14 +9,14 @@ import Foundation
 import Combine
 
 class GithubReposCoordinator: ObservableObject {
-    private let githubClient: GithubReposClient
     private var bucket: Set<AnyCancellable> = []
     
     @Published var selectedTab: GithubTab? = .day
-    @Published var repos: [GithubRepoModel] = []
+    private(set) var reposVM: TrendingGithubReposVM
+    @Published var isRefreshing: Bool = false
     
     init(githubClient: GithubReposClient) {
-        self.githubClient = githubClient
+        reposVM = .init(githubClient: githubClient)
         
         subscribe()
     }
@@ -32,17 +32,18 @@ class GithubReposCoordinator: ObservableObject {
     private func tabDidSelect(_ tab: GithubTab?) {
         guard let tab, let targetDate = getDate(for: tab) else { return }
         Task { @MainActor [weak self] in
-            let repos = try await githubClient.fetch(after: targetDate)
-            self?.repos = repos
+            self?.isRefreshing = true
+            try? await self?.reposVM.refresh(for: targetDate)
+            self?.isRefreshing = false
         }
     }
     
     //Fabric method for getting edge date
     private func getDate(for tab: GithubTab) -> Date? {
         switch tab {
-        case .month: return Calendar.current.date(byAdding: .day, value: -30, to: Date())
+        case .month: return Calendar.current.date(byAdding: .month, value: -1, to: Date())
         case .week: return Calendar.current.date(byAdding: .day, value: -7, to: Date())
-        case .day: return Calendar.current.date(byAdding: .day, value: -0, to: Date())
+        case .day: return Calendar.current.date(byAdding: .day, value: -1, to: Date())
         }
     }
     

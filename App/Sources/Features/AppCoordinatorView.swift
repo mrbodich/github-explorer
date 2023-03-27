@@ -13,15 +13,15 @@ struct AppCoordinatorView: View {
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {
             GithubReposCoordinatorView(
-                coordinator: coordinator.githubExploreCoordinator
+                coordinator: coordinator.githubReposCoordinator
             )
             .tabItem {
                 Label("Trending", systemImage: "chart.line.uptrend.xyaxis")
             }
             .tag(AppTab.explore)
             
-            GithubReposCoordinatorView(
-                coordinator: coordinator.githubExploreCoordinator
+            GithubFavouritesView(
+                viewModel: coordinator.githubFavouritesVM
             )
                 .tabItem {
                     Label("Favourites", systemImage: "star.fill")

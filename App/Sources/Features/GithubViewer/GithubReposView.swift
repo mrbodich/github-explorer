@@ -11,35 +11,54 @@ struct GithubReposView: View {
     let repos: [GithubRepoModel]
     let favouritedIDs: Set<UInt>
     
+    @State private var isLodaingMore: Bool = false
+    @Environment(\.infiniteScrollable) var _onReachEnd
+    
     init(repos: [GithubRepoModel], favouritedIDs: Set<UInt>) {
         self.repos = repos
         self.favouritedIDs = favouritedIDs
     }
     
-    private var _onReachEnd: (() -> ())? = nil
+//    private var _onReachEnd: (() async -> ())? = nil
+    private var _onItemSelect: ((UInt) -> ())? = nil
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 10) {
-                ForEach(repos) { repo in
-                    Button {
+        GeometryReader { outerProxy in
+            ScrollViewReader { scrollProxy in
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        Color.clear.frame(height: 1).id("top_item")
+                        ForEach(repos) { repo in
+                            Button {
+                                _onItemSelect?(repo.id)
+                            } label: {
+                                GithubRepoCellView(model: repo,
+                                                   isFavourited: favouritedIDs.contains(repo.id))
+                            }
+                            .buttonStyle(ScalingButtonStyle())
+                        }
                         
-                    } label: {
-                        GithubRepoCellView(model: repo,
-                                           isFavourited: favouritedIDs.contains(repo.id))
+                        if isLodaingMore {
+                            ProgressView()
+                                .padding(.bottom, 10)
+                                .padding(.top, 15)
+                        }
                     }
-                    .buttonStyle(ScalingButtonStyle())
-                                
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .background {
+                        GeometryReader { proxy in
+                            Color.clear.preference(key: OffsetPreferenceKey.self,
+                                                   value: .init(offset: -proxy.frame(in: .named("GithubReposScrollViewOrigin")).origin.y,
+                                                                maxOffset: proxy.size.height - outerProxy.size.height))
+                            
+                        }
+                    }
                 }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            .background {
-                GeometryReader { proxy in
-                    Color.clear.preference(key: OffsetPreferenceKey.self,
-                                           value: .init(offset: proxy.frame(in: .named("GithubReposScrollViewOrigin")).origin,
-                                                        parentRect: proxy.size))
-
+                .onChange(of: repos.first?.id) { _ in
+                    withAnimation(.easeInOut) {
+                        scrollProxy.scrollTo("top_item")
+                    }
                 }
             }
         }
@@ -48,14 +67,20 @@ struct GithubReposView: View {
                             perform: onOffsetChanged)
     }
     
-    func onReachEnd(_ perform: @escaping (() -> ())) -> Self {
+    func onItemSelect(_ perform: @escaping (UInt) -> ()) -> Self {
         var mutableSelf = self
-        mutableSelf._onReachEnd = perform
+        mutableSelf._onItemSelect = perform
         return mutableSelf
     }
     
     private func onOffsetChanged(_ offset: Offset) {
-        print(offset)
+        if let _onReachEnd, !isLodaingMore, offset.maxOffset > 0, offset.offset > offset.maxOffset - 200 {
+            isLodaingMore = true
+            Task { @MainActor in
+                defer { isLodaingMore = false }
+                await _onReachEnd()
+            }
+        }
     }
     
     private struct OffsetPreferenceKey: PreferenceKey {
@@ -64,9 +89,9 @@ struct GithubReposView: View {
     }
     
     private struct Offset: Equatable {
-        let offset: CGPoint
-        let parentRect: CGSize
-        static var zero = Self.init(offset: .zero, parentRect: .zero)
+        let offset: CGFloat
+        let maxOffset: CGFloat
+        static var zero = Self.init(offset: 0, maxOffset: 0)
     }
 }
 
@@ -75,6 +100,33 @@ struct ScalingButtonStyle: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
             .opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
+struct GithubReposViewContainer: View {
+    @ObservedObject var viewModel: TrendingGithubReposVM
+    
+    var body: some View {
+        GithubReposView(repos: viewModel.repos,
+                        favouritedIDs: viewModel.favouritedIDs)
+    }
+}
+
+extension View {
+    func infiniteScrollable(_ action: @escaping () async -> ()) -> some View {
+        self
+            .environment(\.infiniteScrollable, action)
+    }
+}
+
+struct InfiniteScrollableEnvironmentKey: EnvironmentKey {
+    static var defaultValue: (() async -> ())? = nil
+}
+
+extension EnvironmentValues {
+    var infiniteScrollable: (() async -> ())? {
+        get { self[InfiniteScrollableEnvironmentKey.self] }
+        set { self[InfiniteScrollableEnvironmentKey.self] = newValue }
     }
 }
 

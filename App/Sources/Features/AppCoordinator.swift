@@ -14,11 +14,13 @@ enum AppTab: Hashable {
 class AppCoordinator: ObservableObject {
     @Published var selectedTab: AppTab
     
-    @Published private(set) var githubExploreCoordinator: GithubReposCoordinator
+    private(set) var githubReposCoordinator: GithubReposCoordinator
+    private(set) var githubFavouritesVM: GithubFavouritesVM
     
     init(initialTab: AppTab, githubClient: GithubReposClient) {
         self.selectedTab = initialTab
-        githubExploreCoordinator = .init(githubClient: githubClient)
+        githubReposCoordinator = .init(githubClient: githubClient)
+        githubFavouritesVM = .init()
     }
     
 }
