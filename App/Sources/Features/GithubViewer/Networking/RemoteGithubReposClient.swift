@@ -11,9 +11,17 @@ import Alamofire
 class RemoteGithubReposClient: GithubReposClient {
     private let sortBy: String = "stars"
     private let orderBy: String = "desc"
-    let headers = HTTPHeaders([
-        "Accept" : "application/json"
-    ])
+    
+    let headers: HTTPHeaders = {
+        var headers = HTTPHeaders()
+        headers.add(name: "Accept", value: "application/json")
+        headers.add(name: "X-GitHub-Api-Version", value: "2022-11-28")
+        if let token = Bundle.main.infoDictionary? ["GITHUB_API_KEY"] as? String, !token.isEmpty {
+            print("Token: \"\(token)\"")
+            headers.add(name: "Authorization", value: "Bearer \(token)")
+        }
+        return headers
+    }()
     
     private var lastDirector: GithubResponseDirector? = nil
     

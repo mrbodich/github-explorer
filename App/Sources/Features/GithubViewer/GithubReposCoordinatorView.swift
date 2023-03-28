@@ -24,11 +24,14 @@ struct GithubReposCoordinatorView: View {
                     try? await coordinator.reposVM.refresh()
                     coordinator.isRefreshing = false
                 }
-                .infiniteScrollable {
-                    isLoadingMore = true
-                    try? await coordinator.reposVM.loadMore()
-                    isLoadingMore = false
-                }
+//                .infiniteScrollable {
+//                    guard !coordinator.isRefreshing else { return }
+//                    isLoadingMore = true
+//                    try? await coordinator.reposVM.loadMore()
+//                    isLoadingMore = false
+//                }
+                .opacity(coordinator.isRefreshing ? 0.38 : 1)
+                .animation(.easeInOut, value: coordinator.isRefreshing)
                 .overlay {
                     ProgressView()
                         .progressViewStyle(.circular)

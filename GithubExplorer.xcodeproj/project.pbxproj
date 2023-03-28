@@ -66,6 +66,7 @@
 		E649811729D1D1F500D19EA3 /* TrendingGithubReposVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendingGithubReposVM.swift; sourceTree = "<group>"; };
 		E649811A29D1F19900D19EA3 /* GithubFavouritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubFavouritesView.swift; sourceTree = "<group>"; };
 		E649811C29D1F1A700D19EA3 /* GithubFavouritesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubFavouritesVM.swift; sourceTree = "<group>"; };
+		E649811E29D2DEF100D19EA3 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		E690776B29CECEA000FCA86D /* GithubExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GithubExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E690776E29CECEA000FCA86D /* GithubExplorerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubExplorerApp.swift; sourceTree = "<group>"; };
 		E690777029CECEA000FCA86D /* GithubReposView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubReposView.swift; sourceTree = "<group>"; };
@@ -158,6 +159,14 @@
 			path = GithubFavourites;
 			sourceTree = "<group>";
 		};
+		E649811F29D2E0D400D19EA3 /* Secrets */ = {
+			isa = PBXGroup;
+			children = (
+				E649811E29D2DEF100D19EA3 /* Config.xcconfig */,
+			);
+			path = Secrets;
+			sourceTree = "<group>";
+		};
 		E690776229CECEA000FCA86D = {
 			isa = PBXGroup;
 			children = (
@@ -181,6 +190,7 @@
 			children = (
 				E6AF9D7529CEE77700C44A00 /* Sources */,
 				E690777C29CECF0400FCA86D /* Resources */,
+				E649811F29D2E0D400D19EA3 /* Secrets */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -577,6 +587,7 @@
 		};
 		E690777A29CECEA100FCA86D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E649811E29D2DEF100D19EA3 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -606,6 +617,7 @@
 		};
 		E690777B29CECEA100FCA86D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E649811E29D2DEF100D19EA3 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
