@@ -38,12 +38,12 @@ actor RemoteImageFetcher: ImageFetcher {
         
         let urlSessionConfiguration = RemoteImageFetcher.defaultURLSessionConfiguration()
         urlSession = URLSession(configuration: urlSessionConfiguration)
-        urlSession.configuration.urlCache = urlCache
     }
     
     func fetchImage(url urlStr: String) async throws -> UIImage {
         guard let url = URL(string: urlStr) else { throw URLError(.badURL) }
-        let urlRequest = URLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("max-age=172800", forHTTPHeaderField: "Cache-Control")
         
         if let existingTask = fetchingTasks[urlRequest] {
             return try await existingTask.value
@@ -64,13 +64,18 @@ actor RemoteImageFetcher: ImageFetcher {
         }
         
         let task: Task<UIImage, Error> = Task {
-            let (imageData, _) = try await urlSession.isolatedData(for: urlRequest)
+            let (imageData, urlResponse) = try await urlSession.isolatedData(for: urlRequest)
             let image: UIImage?
             image = UIImage(data: imageData, scale: scale)
             
             guard let image else { throw URLError(.cannotDecodeContentData) }
             
             imageCache.add(image, for: urlRequest)
+            
+            //Saving manually because github returns Cache-Control: no-cache in the response
+            let cachedResponse = CachedURLResponse(response: urlResponse, data: imageData)
+            urlCache.storeCachedResponse(cachedResponse, for: urlRequest)
+            
             return image
         }
         

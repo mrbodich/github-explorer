@@ -10,6 +10,7 @@ import SwiftUI
 struct GithubReposCoordinatorView: View {
     @ObservedObject var coordinator: GithubReposCoordinator
     @State var isLoadingMore: Bool = false
+    @State var isManuallyRefreshing: Bool = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -17,19 +18,20 @@ struct GithubReposCoordinatorView: View {
                         tabs: [.day, .week, .month])
             .padding(.horizontal, 20)
             .disabled(isLoadingMore)
+            .disabled(isManuallyRefreshing)
             
-            GithubReposViewContainer(viewModel: coordinator.reposVM)
+            TrendingGithubReposView(viewModel: coordinator.reposVM)
                 .refreshable {
-                    coordinator.isRefreshing = true
+                    isManuallyRefreshing = true
                     try? await coordinator.reposVM.refresh()
-                    coordinator.isRefreshing = false
+                    isManuallyRefreshing = false
                 }
-//                .infiniteScrollable {
-//                    guard !coordinator.isRefreshing else { return }
-//                    isLoadingMore = true
-//                    try? await coordinator.reposVM.loadMore()
-//                    isLoadingMore = false
-//                }
+                .infiniteScrollable {
+                    guard !coordinator.isRefreshing else { return }
+                    isLoadingMore = true
+                    try? await coordinator.reposVM.loadMore()
+                    isLoadingMore = false
+                }
                 .opacity(coordinator.isRefreshing ? 0.38 : 1)
                 .animation(.easeInOut, value: coordinator.isRefreshing)
                 .overlay {

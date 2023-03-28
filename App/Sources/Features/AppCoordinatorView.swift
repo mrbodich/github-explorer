@@ -28,7 +28,35 @@ struct AppCoordinatorView: View {
                 }
                 .tag(AppTab.favourites)
         }
-//        .tabViewStyle(.page(indexDisplayMode: .always))
+        .didSelectGithubRepo { repoModel in
+            coordinator.showGithubRepoDetails(repoModel)
+        }
+        .overlay(popups)
+    }
+    
+    private var popups: some View {
+        Color.clear
+            .sheet(item: $coordinator.presentedGithubRepoVM) { githubRepoVM in
+                GithubRepoDetailsView(viewModel: githubRepoVM)
+            }
+    }
+}
+
+extension View {
+    func didSelectGithubRepo(_ action: @escaping (_ repoModel: GithubRepoModel) -> ()) -> some View {
+        self
+            .environment(\.didSelectGithubRepo, action)
+    }
+}
+
+struct DidSelectGithubRepoKey: EnvironmentKey {
+    static var defaultValue: ((GithubRepoModel) -> ())? = nil
+}
+
+extension EnvironmentValues {
+    var didSelectGithubRepo: ((GithubRepoModel) -> ())? {
+        get { self[DidSelectGithubRepoKey.self] }
+        set { self[DidSelectGithubRepoKey.self] = newValue }
     }
 }
 
@@ -37,7 +65,8 @@ struct AppView_Previews: PreviewProvider {
     static var previews: some View {
         AppCoordinatorView(
             coordinator: .init(initialTab: .explore,
-                               githubClient: MockGithubReposClient())
+                               githubClient: MockGithubReposClient(),
+                               favouritesStore: GithubReposFavouritesStore())
         )
     }
 }

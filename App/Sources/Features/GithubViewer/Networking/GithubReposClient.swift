@@ -21,7 +21,10 @@ struct MockGithubReposClient: GithubReposClient {
                       owner: .init(login: "John Smith", avatarUrl: ""),
                       description: "让生产力加倍的 ChatGPT 快捷指令，按照领域和功能分区，可对提示词进行标签筛选、关键词搜索和一键复制。",
                       stargazersCount: 4195,
-                      createdAt: "")
+                      language: "Java",
+                      forks: 12,
+                      createdAt: "",
+                      htmlUrl: "")
             }
     }
     

@@ -11,7 +11,8 @@ struct GithubFavouritesView: View {
     @ObservedObject var viewModel: GithubFavouritesVM
     
     var body: some View {
-        Text("Hello, World!")
+        GithubReposView(repos: viewModel.repos,
+                        favouritedIDs: viewModel.favouritedIDs)
     }
 }
 

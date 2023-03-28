@@ -13,14 +13,12 @@ struct GithubReposView: View {
     
     @State private var isLodaingMore: Bool = false
     @Environment(\.infiniteScrollable) var _onReachEnd
+    @Environment(\.didSelectGithubRepo) var didSelectGithubRepo
     
     init(repos: [GithubRepoModel], favouritedIDs: Set<UInt>) {
         self.repos = repos
         self.favouritedIDs = favouritedIDs
     }
-    
-//    private var _onReachEnd: (() async -> ())? = nil
-    private var _onItemSelect: ((UInt) -> ())? = nil
     
     var body: some View {
         GeometryReader { outerProxy in
@@ -30,7 +28,7 @@ struct GithubReposView: View {
                         Color.clear.frame(height: 1).id("top_item")
                         ForEach(repos) { repo in
                             Button {
-                                _onItemSelect?(repo.id)
+                                didSelectGithubRepo?(repo)
                             } label: {
                                 GithubRepoCellView(model: repo,
                                                    isFavourited: favouritedIDs.contains(repo.id))
@@ -43,6 +41,8 @@ struct GithubReposView: View {
                                 .padding(.bottom, 10)
                                 .padding(.top, 15)
                         }
+                        
+                        Spacer(minLength: 20)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
@@ -65,12 +65,6 @@ struct GithubReposView: View {
         .coordinateSpace(name: "GithubReposScrollViewOrigin")
         .onPreferenceChange(OffsetPreferenceKey.self,
                             perform: onOffsetChanged)
-    }
-    
-    func onItemSelect(_ perform: @escaping (UInt) -> ()) -> Self {
-        var mutableSelf = self
-        mutableSelf._onItemSelect = perform
-        return mutableSelf
     }
     
     private func onOffsetChanged(_ offset: Offset) {
@@ -103,15 +97,6 @@ struct ScalingButtonStyle: ButtonStyle {
     }
 }
 
-struct GithubReposViewContainer: View {
-    @ObservedObject var viewModel: TrendingGithubReposVM
-    
-    var body: some View {
-        GithubReposView(repos: viewModel.repos,
-                        favouritedIDs: viewModel.favouritedIDs)
-    }
-}
-
 extension View {
     func infiniteScrollable(_ action: @escaping () async -> ()) -> some View {
         self
@@ -139,25 +124,37 @@ struct GithubReposView_Previews: PreviewProvider {
                   owner: .init(login: "John Smith", avatarUrl: "https://avatars.githubusercontent.com/u/9919?s=200&v=4"),
                   description: "让生产力加倍的 ChatGPT 快捷指令，按照领域和功能分区，可对提示词进行标签筛选、关键词搜索和一键复制。",
                   stargazersCount: 4195,
-                  createdAt: ""),
+                  language: "Java",
+                  forks: 12,
+                  createdAt: "",
+                  htmlUrl: ""),
             .init(id: 1,
                   name: "ver-useful-repo",
                   owner: .init(login: "John Smith", avatarUrl: ""),
                   description: "让生产力加倍的 ChatGPT 快捷指令，按照领域和功能分区，可对提示词进行标签筛选、关键词搜索和一键复制。",
                   stargazersCount: 4195,
-                  createdAt: ""),
+                  language: "Java",
+                  forks: 12,
+                  createdAt: "",
+                  htmlUrl: ""),
             .init(id: 2,
                   name: "HelpfulFramework",
                   owner: .init(login: "c00lhacker", avatarUrl: "https://avatars.githubusercontent.com/u/20487725?s=200&v=4"),
                   description: "Opensource IT Communities",
                   stargazersCount: 38500,
-                  createdAt: ""),
+                  language: "Java",
+                  forks: 12,
+                  createdAt: "",
+                  htmlUrl: ""),
             .init(id: 3,
                   name: "Pet_project",
                   owner: .init(login: "noob_user", avatarUrl: ""),
                   description: nil,
                   stargazersCount: 1,
-                  createdAt: "")
+                  language: "Java",
+                  forks: 12,
+                  createdAt: "",
+                  htmlUrl: "")
         ]
         
         GithubReposView(repos: repos,

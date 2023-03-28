@@ -8,5 +8,6 @@
 import Foundation
 
 final class GithubFavouritesVM: ObservableObject {
-    
+    @Published var repos: [GithubRepoModel] = []
+    @Published var favouritedIDs: Set<UInt> = []
 }

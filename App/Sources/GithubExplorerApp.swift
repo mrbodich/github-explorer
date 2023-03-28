@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct GithubExplorerApp: SwiftUI.App {
     @StateObject var appCoordinator = AppCoordinator(initialTab: .explore,
-                                                     githubClient: RemoteGithubReposClient())
+                                                     githubClient: RemoteGithubReposClient(),
+                                                     favouritesStore: GithubReposFavouritesStore())
     
     var body: some Scene {
         WindowGroup {
