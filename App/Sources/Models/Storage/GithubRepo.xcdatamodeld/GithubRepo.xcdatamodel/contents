@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GithubRepo" representedClassName="GithubRepo" syncable="YES">
+        <attribute name="createdAt" attributeType="String"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String"/>
+        <attribute name="forks" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="htmlUrl" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES">
+            <userInfo>
+                <entry key="id" value="value"/>
+            </userInfo>
+        </attribute>
+        <attribute name="isFavourited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="ownerAvatarUrl" attributeType="String"/>
+        <attribute name="ownerLogin" attributeType="String"/>
+        <attribute name="stargazersCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>
