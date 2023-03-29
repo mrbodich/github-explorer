@@ -20,6 +20,7 @@ CommonCrypto/*/module.map
 zlib/*/module.map
 Carthage/
 Podfile.lock
+App/Secrets/Config.xcconfig
 
 #Fastlane ignores
 fastlane/
