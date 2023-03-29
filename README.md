@@ -27,7 +27,7 @@
  git clone https://github.com/mrbodich/github-explorer.git && \
     cd github-explorer && \
     mkdir App/Secrets && \
-    touch touch App/Secrets/Config.xcconfig && \
+    touch App/Secrets/Config.xcconfig && \
     echo "GITHUB_API_KEY =" >> App/Secrets/Config.xcconfig
  ```
 
