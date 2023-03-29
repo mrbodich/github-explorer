@@ -24,7 +24,7 @@
  Or simply run this command in terminal
 
  ```
- git clone git@github.com:mrbodich/github-explorer.git && \
+ git clone git@github.com/github-explorer.git && \
     cd github-explorer && \
     mkdir App/Secrets && \
     touch touch App/Secrets/Config.xcconfig && \
