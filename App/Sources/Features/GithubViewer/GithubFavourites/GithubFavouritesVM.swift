@@ -8,6 +8,18 @@
 import Foundation
 
 final class GithubFavouritesVM: ObservableObject {
+    weak private var favouritesStore: GithubReposFavouritesStore?
+    
     @Published var repos: [GithubRepoModel] = []
-    @Published var favouritedIDs: Set<UInt> = []
+
+    init(favouritesStore: GithubReposFavouritesStore) {
+        self.favouritesStore = favouritesStore
+        subscribe()
+    }
+    
+    private func subscribe() {
+        favouritesStore?.$favouritedGithubRepos
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$repos)
+    }
 }

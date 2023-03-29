@@ -12,14 +12,6 @@ struct GithubFavouritesView: View {
     
     var body: some View {
         GithubReposView(repos: viewModel.repos,
-                        favouritedIDs: viewModel.favouritedIDs)
-    }
-}
-
-struct GithubFavouritesView_Previews: PreviewProvider {
-    static var previews: some View {
-        GithubFavouritesView(
-            viewModel: .init()
-        )
+                        favouritedIDs: [])
     }
 }

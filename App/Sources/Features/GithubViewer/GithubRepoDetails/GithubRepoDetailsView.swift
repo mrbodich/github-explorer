@@ -12,66 +12,68 @@ struct GithubRepoDetailsView: View {
     
     var body: some View {
         let repo = viewModel.model
-        ScrollView {
-            VStack(spacing: 10) {
-                Color.gray
-                    .frame(width: 40, height: 4)
-                    .clipShape(Capsule(style: .continuous))
-                    .padding(.top, 4)
-                    .padding(.bottom, 15)
-                
-                HStack(spacing: 0) {
-                    Color.clear
-                    CachingRemoteImage(urlStr: repo.owner.avatarUrl,
-                                       placeholder: .color(.clear),
-                                       contentMode: .fill)
-                    .aspectRatio(1, contentMode: .fit)
-                    .clipShape(Circle())
-                    .overlay(alignment: .bottomTrailing) {
-                        favouriteButton
-                            .offset(x: 15, y: 5)
-                    }
-                    Color.clear
-                }
-                .padding(.bottom, 15)
-                
-                VStack(spacing: 0) {
-                    Text(repo.owner.login)
-                        .font(.largeTitle)
-                        .lineLimit(1)
-                    Text(repo.name)
-                        .font(.title2)
-                        .lineLimit(1)
-                    HStack(spacing: 4) {
-                        Image(systemName: "star")
-                            .foregroundColor(.yellow)
-                        Text("\(repo.stargazersCount)")
-                        Image(systemName: "star")
-                            .foregroundColor(.yellow)
-                    }
-                    .font(.body.weight(.regular))
-                    .lineLimit(1)
-                    .padding(.bottom, 20)
-                    
-                    if let description = repo.description {
-                        Text(description)
-                            .font(.body)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    
-                    Spacer(minLength: 30)
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("Language: \(repo.language ?? "Unknown")")
-                        Text("Forks: \(repo.forks)")
-                        if let dateString = dateString(from: repo.createdAt) {
-                            Text("Created at \(dateString)")
+        VStack(spacing: 0) {
+            Color.gray
+                .frame(width: 40, height: 4)
+                .clipShape(Capsule(style: .continuous))
+                .padding(.top, 4)
+                .padding(.bottom, 25)
+            
+            ScrollView {
+                VStack(spacing: 10) {
+                    HStack(spacing: 0) {
+                        Color.clear
+                        CachingRemoteImage(urlStr: repo.owner.avatarUrl,
+                                           placeholder: .color(.clear),
+                                           contentMode: .fill)
+                        .aspectRatio(1, contentMode: .fit)
+                        .clipShape(Circle())
+                        .overlay(alignment: .bottomTrailing) {
+                            favouriteButton
+                                .offset(x: 15, y: 5)
                         }
+                        Color.clear
                     }
-                    .font(.headline)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 15)
+                    
+                    VStack(spacing: 0) {
+                        Text(repo.owner.login)
+                            .font(.largeTitle)
+                            .lineLimit(1)
+                        Text(repo.name)
+                            .font(.title2)
+                            .lineLimit(1)
+                        HStack(spacing: 4) {
+                            Image(systemName: "star")
+                                .foregroundColor(.yellow)
+                            Text("\(repo.stargazersCount)")
+                            Image(systemName: "star")
+                                .foregroundColor(.yellow)
+                        }
+                        .font(.body.weight(.regular))
+                        .lineLimit(1)
+                        .padding(.bottom, 20)
+                        
+                        if let description = repo.description {
+                            Text(description)
+                                .font(.body)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        Spacer(minLength: 30)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Language: \(repo.language ?? "Unknown")")
+                            Text("Forks: \(repo.forks)")
+                            if let dateString = dateString(from: repo.createdAt) {
+                                Text("Created at \(dateString)")
+                            }
+                        }
+                        .font(.headline)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 20)
             }
         }
     }

@@ -8,10 +8,16 @@
 import Foundation
 import Combine
 
+protocol GithubRepoDetailsDelegate: AnyObject {
+    func repoDidFavourited(_ repo: GithubRepoModel)
+    func repoDidRemoveFromFavourites(withId id: UInt)
+}
+
 class GithubRepoDetailsVM: ObservableObject, Identifiable {
     let id: UInt
     let model: GithubRepoModel
     weak var favouritesStore: GithubReposFavouritesStore?
+    weak var delegate: GithubRepoDetailsDelegate?
     
     @Published var isFavourited: Bool = false
     
@@ -24,7 +30,10 @@ class GithubRepoDetailsVM: ObservableObject, Identifiable {
     }
     
     func toggleFavourite() {
-        
+        switch isFavourited {
+        case true: delegate?.repoDidRemoveFromFavourites(withId: id)
+        case false: delegate?.repoDidFavourited(model)
+        }
     }
     
     private func subscribe() {
@@ -35,6 +44,7 @@ class GithubRepoDetailsVM: ObservableObject, Identifiable {
                 guard let id = self?.id else { return false }
                 return $0.contains(id)
             }
+            .receive(on: DispatchQueue.main)
             .assign(to: &$isFavourited)
     }
     

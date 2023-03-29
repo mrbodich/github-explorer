@@ -9,9 +9,10 @@ import SwiftUI
 
 struct TrendingGithubReposView: View {
     @ObservedObject var viewModel: TrendingGithubReposVM
+    @Environment(\.githubReposFavouritesIDs) var favouritesIDs
     
     var body: some View {
         GithubReposView(repos: viewModel.repos,
-                        favouritedIDs: viewModel.favouritedIDs)
+                        favouritedIDs: favouritesIDs)
     }
 }

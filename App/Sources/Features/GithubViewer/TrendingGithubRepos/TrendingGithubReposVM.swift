@@ -12,7 +12,6 @@ final class TrendingGithubReposVM: ObservableObject {
     private var lastLoadedDate: Date? = nil
     
     @Published var repos: [GithubRepoModel] = []
-    @Published var favouritedIDs: Set<UInt> = []
     
     init(githubClient: GithubReposClient) {
         self.githubClient = githubClient

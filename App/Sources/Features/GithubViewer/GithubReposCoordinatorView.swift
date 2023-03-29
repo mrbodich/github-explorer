@@ -13,35 +13,41 @@ struct GithubReposCoordinatorView: View {
     @State var isManuallyRefreshing: Bool = false
     
     var body: some View {
-        VStack(spacing: 20) {
-            RoundedTabs(selectedTab: $coordinator.selectedTab,
-                        tabs: [.day, .week, .month])
-            .padding(.horizontal, 20)
-            .disabled(isLoadingMore)
-            .disabled(isManuallyRefreshing)
-            
-            TrendingGithubReposView(viewModel: coordinator.reposVM)
-                .refreshable {
-                    isManuallyRefreshing = true
-                    try? await coordinator.reposVM.refresh()
-                    isManuallyRefreshing = false
-                }
-                .infiniteScrollable {
-                    guard !coordinator.isRefreshing else { return }
-                    isLoadingMore = true
-                    try? await coordinator.reposVM.loadMore()
-                    isLoadingMore = false
-                }
-                .opacity(coordinator.isRefreshing ? 0.38 : 1)
-                .animation(.easeInOut, value: coordinator.isRefreshing)
-                .overlay {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .opacity(coordinator.isRefreshing ? 1 : 0)
-                        .animation(.easeInOut, value: coordinator.isRefreshing)
-                }
+        GeometryReader { proxy in
+            NavigationView {
+                TrendingGithubReposView(viewModel: coordinator.reposVM)
+                    .refreshable {
+                        isManuallyRefreshing = true
+                        try? await coordinator.reposVM.refresh()
+                        isManuallyRefreshing = false
+                    }
+                    .infiniteScrollable {
+                        guard !coordinator.isRefreshing else { return }
+                        isLoadingMore = true
+                        try? await coordinator.reposVM.loadMore()
+                        isLoadingMore = false
+                    }
+                    .opacity(coordinator.isRefreshing ? 0.38 : 1)
+                    .animation(.easeInOut, value: coordinator.isRefreshing)
+                    .overlay {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .opacity(coordinator.isRefreshing ? 1 : 0)
+                            .animation(.easeInOut, value: coordinator.isRefreshing)
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .automatic) {
+                            RoundedTabs(selectedTab: $coordinator.selectedTab,
+                                        tabs: [.day, .week, .month])
+                            .padding(.horizontal, 20)
+                            .frame(width: proxy.size.width)
+                            .disabled(isLoadingMore)
+                            .disabled(isManuallyRefreshing)
+                        }
+                    }
+            }
+            .disabled(coordinator.isRefreshing)
         }
-        .disabled(coordinator.isRefreshing)
     }
 }
 

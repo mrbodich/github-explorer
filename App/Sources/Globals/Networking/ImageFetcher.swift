@@ -19,6 +19,7 @@ actor RemoteImageFetcher: ImageFetcher {
     private let imageCache: AutoPurgingImageCache
     private let urlCache: URLCache
     private var screenScale: CGFloat! = nil
+    private let semaphore = AsyncSemaphore(count: 20)
     
     static var `default`: RemoteImageFetcher = .init(sid: "com.githubexplorer.imageremotefetcher", memoryCacheCapacity: 100, diskCacheCapacity: 150)
     
@@ -64,19 +65,27 @@ actor RemoteImageFetcher: ImageFetcher {
         }
         
         let task: Task<UIImage, Error> = Task {
-            let (imageData, urlResponse) = try await urlSession.isolatedData(for: urlRequest)
-            let image: UIImage?
-            image = UIImage(data: imageData, scale: scale)
-            
-            guard let image else { throw URLError(.cannotDecodeContentData) }
-            
-            imageCache.add(image, for: urlRequest)
-            
-            //Saving manually because github returns Cache-Control: no-cache in the response
-            let cachedResponse = CachedURLResponse(response: urlResponse, data: imageData)
-            urlCache.storeCachedResponse(cachedResponse, for: urlRequest)
-            
-            return image
+            await semaphore.wait()
+            do {
+                let (imageData, urlResponse) = try await urlSession.isolatedData(for: urlRequest)
+                await semaphore.release()
+                
+                let image: UIImage?
+                image = UIImage(data: imageData, scale: scale)
+                
+                guard let image else { throw URLError(.cannotDecodeContentData) }
+                
+                imageCache.add(image, for: urlRequest)
+                
+                //Saving manually because github returns Cache-Control: no-cache in the response
+                let cachedResponse = CachedURLResponse(response: urlResponse, data: imageData)
+                urlCache.storeCachedResponse(cachedResponse, for: urlRequest)
+                
+                return image
+            } catch {
+                await semaphore.release()
+                throw error
+            }
         }
         
         fetchingTasks[urlRequest] = task
