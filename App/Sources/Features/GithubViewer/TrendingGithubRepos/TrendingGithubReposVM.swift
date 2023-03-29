@@ -12,6 +12,7 @@ final class TrendingGithubReposVM: ObservableObject {
     private var lastLoadedDate: Date? = nil
     
     @Published var repos: [GithubRepoModel] = []
+    @Published var isFetchedWithError: Bool = false
     
     init(githubClient: GithubReposClient) {
         self.githubClient = githubClient
@@ -20,8 +21,14 @@ final class TrendingGithubReposVM: ObservableObject {
     @MainActor
     func refresh(for date: Date) async throws {
         lastLoadedDate = date
-        let repos = try await githubClient.fetch(after: date)
-        self.repos = repos
+        do {
+            let repos = try await githubClient.fetch(after: date)
+            isFetchedWithError = false
+            self.repos = repos
+        } catch {
+            isFetchedWithError = true
+            throw error
+        }
     }
     
     @MainActor
@@ -32,6 +39,7 @@ final class TrendingGithubReposVM: ObservableObject {
     
     @MainActor
     func loadMore() async throws {
+        guard !isFetchedWithError else { return }
         if let nextRepos = try await githubClient.fetchNext() {
             let uniqueRepos = nextRepos
                 .filter { newRepo in !self.repos.contains { $0.id == newRepo.id } }

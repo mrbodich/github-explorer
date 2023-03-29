@@ -60,11 +60,11 @@ struct GithubReposView: View {
                         scrollProxy.scrollTo("top_item")
                     }
                 }
+                .onPreferenceChange(OffsetPreferenceKey.self,
+                                    perform: onOffsetChanged)
             }
         }
         .coordinateSpace(name: "GithubReposScrollViewOrigin")
-        .onPreferenceChange(OffsetPreferenceKey.self,
-                            perform: onOffsetChanged)
     }
     
     private func onOffsetChanged(_ offset: Offset) {

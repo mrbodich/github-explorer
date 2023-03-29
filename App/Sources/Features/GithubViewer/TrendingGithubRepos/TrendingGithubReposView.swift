@@ -10,9 +10,17 @@ import SwiftUI
 struct TrendingGithubReposView: View {
     @ObservedObject var viewModel: TrendingGithubReposVM
     @Environment(\.githubReposFavouritesIDs) var favouritesIDs
+    @Environment(\.goToFavoritesDidPress) var goToFavorites
     
     var body: some View {
-        GithubReposView(repos: viewModel.repos,
-                        favouritedIDs: favouritesIDs)
+        switch viewModel.isFetchedWithError {
+        case false:
+            GithubReposView(repos: viewModel.repos,
+                            favouritedIDs: favouritesIDs)
+        case true:
+            FailedLoadingView {
+                goToFavorites?()
+            }
+        }
     }
 }

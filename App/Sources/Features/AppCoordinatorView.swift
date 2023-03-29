@@ -16,6 +16,7 @@ struct AppCoordinatorView: View {
                 coordinator: coordinator.githubReposCoordinator
             )
             .environment(\.githubReposFavouritesIDs, coordinator.favouritedGithubReposIDs)
+            .goToFavoritesDidPress { coordinator.selectedTab = .favourites }
             .tabItem {
                 Label("Trending", systemImage: "chart.line.uptrend.xyaxis")
             }
